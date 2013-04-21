@@ -37,7 +37,10 @@ public class SpaceAttack extends BasicGame {
 	public static void main(String[] args) throws SlickException {
 		AppGameContainer app = new AppGameContainer(new SpaceAttack());
         app.setDisplayMode(width, height, fullscreen);
-        app.setShowFPS(true);
+        app.setShowFPS(false);
+        app.setTargetFrameRate(60);
+        app.setMaximumLogicUpdateInterval(15);
+        app.setMinimumLogicUpdateInterval(15);
         app.start();
 	}
 
