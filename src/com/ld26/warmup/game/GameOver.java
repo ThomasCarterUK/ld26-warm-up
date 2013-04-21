@@ -13,6 +13,7 @@ import com.ld26.warmup.game.entities.Player;
 public class GameOver extends BasicGameState {
 	
 	private Image screen;
+	private int time = 0;
 	
 	public GameOver() {
 		
@@ -25,7 +26,13 @@ public class GameOver extends BasicGameState {
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+		time++;
 		
+		if (time == 500) {
+			time = 0;
+			game.enterState(GameStates.menu);
+			World.reset();
+		}
 	}
 	
 	@Override

@@ -1,12 +1,10 @@
 package com.ld26.warmup.game.entities;
 
-import java.util.Random;
-
-import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Rectangle;
 
 public class Enemy {
@@ -16,6 +14,7 @@ public class Enemy {
 	private float x;
 	private float y;
 	private Image texture;
+	private Sound deathSFX;
 	private Rectangle collisionBox;
 	
 	private float movementSpeed = 0.3f * 15;
@@ -30,6 +29,7 @@ public class Enemy {
 		height = texture.getHeight();
 		collisionBox = new Rectangle(x, y, width, height);
 		health = maxHealth;
+		deathSFX = new Sound("res/sounds/death.wav");
 	}
 	
 	public Rectangle getBounds() {
@@ -53,11 +53,15 @@ public class Enemy {
 	}
 	
 	public void die() {
-		
+		deathSFX.play();
 	}
 	
 	public void update(GameContainer container) {
 		y += movementSpeed;
+		
+		if (health == 0) {
+			die();
+		}
 		
 		collisionBox.setX(x);
 		collisionBox.setY(y);

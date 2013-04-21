@@ -20,11 +20,12 @@ public class Player {
 	private float width;
 	private float height;
 	private float x = 300;
-	private float y = 430;
+	private float y = 410;
 	private Image texture;
 	private Rectangle collisionBox;
 	private Sound laserSFX;
 	private Sound hurtSFX;
+	private Sound deathSFX;
 	private StateBasedGame game;
 	private World world;
 	
@@ -46,6 +47,7 @@ public class Player {
 		bullets = new ArrayList<Bullet>();
 		laserSFX = new Sound("res/sounds/laser.wav");
 		hurtSFX = new Sound("res/sounds/hurt.wav");
+		deathSFX = new Sound("res/sounds/death.wav");
 		this.world = world;
 	}
 	
@@ -96,7 +98,13 @@ public class Player {
 		hurtSFX.play();
 	}
 	
+	public void reset() {
+		x = 300;
+		health = maxHealth;
+	}
+	
 	public void die() {
+		deathSFX.play();
 		game.enterState(GameStates.gameover);
 	}
 	
@@ -112,7 +120,7 @@ public class Player {
 			fireBullet();
 		}
 		
-		if (health == 0) {
+		if (health <= 0) {
 			die();
 		}
 		

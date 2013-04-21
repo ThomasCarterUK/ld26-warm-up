@@ -30,9 +30,10 @@ public class SpaceAttack extends StateBasedGame {
 
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
+		this.getState(GameStates.menu).init(container, this);
 		this.getState(GameStates.playing).init(container, this);
 		this.getState(GameStates.gameover).init(container, this);
-		this.enterState(GameStates.playing);
+		this.enterState(GameStates.menu);
 	}
 
 }
