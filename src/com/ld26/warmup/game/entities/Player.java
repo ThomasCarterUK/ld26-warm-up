@@ -101,6 +101,7 @@ public class Player {
 	public void reset() {
 		x = 300;
 		health = maxHealth;
+		score = 0;
 	}
 	
 	public void die() {
