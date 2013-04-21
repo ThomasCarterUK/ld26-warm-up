@@ -1,37 +1,21 @@
 package com.ld26.warmup.game;
 
 import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.StateBasedGame;
 
-public class SpaceAttack extends BasicGame {
+public class SpaceAttack extends StateBasedGame {
 	
 	private static int width = 640;
 	private static int height = 480;
 	private static boolean fullscreen = false;
-	
-	private World world;
 
-	public SpaceAttack() {
+	public SpaceAttack() throws SlickException {
 		super("Space Attack");
-	}
-
-	@Override
-	public void init(GameContainer container) throws SlickException {
-		world = new World(width, height, new Image("res/graphics/bg.png"));
-	}
-
-	@Override
-	public void update(GameContainer container, int delta) throws SlickException {
-		world.update(container);
-	}
-	
-	@Override
-	public void render(GameContainer container, Graphics g) throws SlickException {
-		world.render(container, g);
+		this.addState(new Menu());
+		this.addState(new Playing(this));
+		this.addState(new GameOver());
 	}
 	
 	public static void main(String[] args) throws SlickException {
@@ -42,6 +26,13 @@ public class SpaceAttack extends BasicGame {
         app.setMaximumLogicUpdateInterval(15);
         app.setMinimumLogicUpdateInterval(15);
         app.start();
+	}
+
+	@Override
+	public void initStatesList(GameContainer container) throws SlickException {
+		this.getState(GameStates.playing).init(container, this);
+		this.getState(GameStates.gameover).init(container, this);
+		this.enterState(GameStates.playing);
 	}
 
 }

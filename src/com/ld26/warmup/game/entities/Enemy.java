@@ -65,8 +65,8 @@ public class Enemy {
 	
 	public void render(GameContainer container, Graphics g) {
 		texture.draw(x, y);
-		g.setColor(Color.white);
-		g.draw(collisionBox);
+		//g.setColor(Color.white);
+		//g.draw(collisionBox);
 	}
 
 }

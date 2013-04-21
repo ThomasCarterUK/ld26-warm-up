@@ -9,7 +9,9 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.state.StateBasedGame;
 
+import com.ld26.warmup.game.GameStates;
 import com.ld26.warmup.game.World;
 import com.ld26.warmup.game.projectiles.Bullet;
 
@@ -22,16 +24,20 @@ public class Player {
 	private Image texture;
 	private Rectangle collisionBox;
 	private Sound laserSFX;
+	private Sound hurtSFX;
+	private StateBasedGame game;
 	private World world;
 	
 	private float scale = 5f;
 	private float movementSpeed = 0.5f * 15;
 	private int maxHealth = 100;
 	private int health;
+	private static int score = 0;
 	
 	private ArrayList<Bullet> bullets;
 	
-	public Player(World world) throws SlickException {
+	public Player(World world, StateBasedGame game) throws SlickException {
+		this.game = game;
 		texture = new Image("res/graphics/player.png");
 		width = texture.getWidth();
 		height = texture.getHeight();
@@ -39,6 +45,7 @@ public class Player {
 		health = maxHealth;
 		bullets = new ArrayList<Bullet>();
 		laserSFX = new Sound("res/sounds/laser.wav");
+		hurtSFX = new Sound("res/sounds/hurt.wav");
 		this.world = world;
 	}
 	
@@ -76,12 +83,21 @@ public class Player {
 		return health;
 	}
 	
+	public static int getScore() {
+		return score;
+	}
+	
+	public static void inscreaseScore(int amount) {
+		score += amount;
+	}
+	
 	public void decreaseHealth(int amount) {
 		health -= amount;
+		hurtSFX.play();
 	}
 	
 	public void die() {
-		
+		game.enterState(GameStates.gameover);
 	}
 	
 	public void update(GameContainer container) throws SlickException {
@@ -96,7 +112,7 @@ public class Player {
 			fireBullet();
 		}
 		
-		if (health < 0) {
+		if (health == 0) {
 			die();
 		}
 		

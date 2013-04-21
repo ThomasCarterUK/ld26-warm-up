@@ -9,6 +9,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.state.StateBasedGame;
 
 import com.ld26.warmup.game.entities.Enemy;
 import com.ld26.warmup.game.entities.Player;
@@ -19,8 +20,10 @@ public class World {
 	private int width;
 	private int height;
 	private Image background;
-	private String health;
+	private String health = "Health: ";
+	private String score = "Score: ";
 	
+	private StateBasedGame game;
 	private Player player;
 	private Enemy enemy;
 	private ArrayList<Enemy> enemies;
@@ -29,12 +32,12 @@ public class World {
 	
 	private int spawnRate = 0;
 	
-	public World(int width, int height, Image background) throws SlickException {
+	public World(int width, int height, Image background, StateBasedGame game) throws SlickException {
+		this.game = game;
 		this.width = width;
 		this.height = height;
 		this.background = background;
-		player = new Player(this);
-		health = new String("Health: ");
+		player = new Player(this, game);
 		enemies = new ArrayList<Enemy>();
 		bullets = player.getBullets();
 	}
@@ -61,6 +64,7 @@ public class World {
         		if (bullet.getBounds().intersects(enemy.getBounds())) {
         			enemies.remove(enemy);
         			bullets.remove(bullet);
+        			player.inscreaseScore(10);
         		}
         	}
         }
@@ -86,10 +90,10 @@ public class World {
 		
 		Random random = new Random();
 		
-			if (spawnRate == 10) {
+			if (spawnRate == 20) {
 				enemies.add(new Enemy((float) Math.random() * 590, 0));
 			}
-			if (spawnRate == 12) {
+			if (spawnRate == 22) {
 				spawnRate = 0;
 			}
 			
@@ -118,6 +122,7 @@ public class World {
 		
 		g.setColor(Color.white);
 		g.drawString(health + player.getHealth(), 0, 0);
+		g.drawString(score + player.getScore(), 500, 0);
 	}
 
 }
