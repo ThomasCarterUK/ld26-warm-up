@@ -22,7 +22,7 @@ public class Menu extends BasicGameState {
 
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
-		background = new Image("/res/graphics/menu.png");
+		background = new Image("res/graphics/menu.png");
 		player = new MenuPlayer();
 		floor = new Floor();
 	}
