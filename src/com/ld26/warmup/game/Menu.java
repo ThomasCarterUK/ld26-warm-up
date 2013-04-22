@@ -15,6 +15,7 @@ import com.ld26.warmup.game.entities.MenuPlayer;
 public class Menu extends BasicGameState {
 	
 	private Image background;
+	private Image logo;
 	private MenuPlayer player;
 	private Floor floor;
 	
@@ -22,7 +23,8 @@ public class Menu extends BasicGameState {
 
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
-		background = new Image("res/graphics/menu.png");
+		background = new Image("res/graphics/menu2.png");
+		logo = new Image("res/graphics/logo.png");
 		player = new MenuPlayer();
 		floor = new Floor();
 	}
@@ -40,6 +42,10 @@ public class Menu extends BasicGameState {
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		background.draw(0, 0);
+		
+		float yBobbing = (float) Math.sin(container.getTime() / 10000f * 100);
+		logo.draw(container.getWidth() / 2 - (logo.getWidth() / 2), 30 + yBobbing);
+		
 		player.render(container, g);
 		floor.render();
 		
