@@ -8,24 +8,22 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
-import com.ld26.warmup.game.entities.Player;
-
-public class GameOver extends BasicGameState {
+public class WinScreen extends BasicGameState {
 	
 	private Image screen;
 	private int time = 0;
-	
-	public GameOver() {
+
+	@Override
+	public void init(GameContainer container, StateBasedGame game)
+			throws SlickException {
+		screen = new Image("res/graphics/win.png");
 		
 	}
 
+	
 	@Override
-	public void init(GameContainer container, StateBasedGame game) throws SlickException {
-		screen = new Image("res/graphics/gameover.png");
-	}
-
-	@Override
-	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+	public void update(GameContainer container, StateBasedGame game, int delta)
+			throws SlickException {
 		time++;
 		
 		if (time == 500) {
@@ -34,19 +32,23 @@ public class GameOver extends BasicGameState {
 			World.reset();
 			World.getPlayer().resetHealth();
 		}
+		
 	}
 	
 	@Override
-	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
+	public void render(GameContainer container, StateBasedGame game, Graphics g)
+			throws SlickException {
 		screen.draw(0, 0);
+		
 		g.setColor(Color.green);
-		g.drawString("Score: " + Player.getScore(), 260, 250);
+		g.drawString("Final Score: " + World.getPlayer().getActualScore(), 230, 250);
 	}
+
 
 	@Override
 	public int getID() {
-		return GameStates.gameover;
+		// TODO Auto-generated method stub
+		return GameStates.win;
 	}
 
-	
 }

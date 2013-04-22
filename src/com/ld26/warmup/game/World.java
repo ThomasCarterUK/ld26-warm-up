@@ -22,6 +22,11 @@ public class World {
 	private int height;
 	private Image background;
 	private String health = "Health: ";
+	private String levelName = "";
+	private int nextLevel = 2;
+	private int untilNextLevel = 500;
+	private int nextLevelScore = 500;
+	private int levelNameTimer = 0;
 	private String score = "Score: ";
 	
 	private StateBasedGame game;
@@ -34,17 +39,42 @@ public class World {
 	private Sound deathSFX;
 	
 	private int spawnRate = 0;
+	private int spawnEnemy = 50;
 	
-	public World(int width, int height, Image background, StateBasedGame game) throws SlickException {
+	public World(int width, int height, Image background, StateBasedGame game, int nextLevel) throws SlickException {
 		this.game = game;
 		this.width = width;
 		this.height = height;
 		this.background = background;
+		this.nextLevel = nextLevel;
 		player = new Player(this, game);
 		enemies = new ArrayList<Enemy>();
 		bullets = player.getBullets();
 		deathSFX = new Sound("res/sounds/death.wav");
 		floor = new Floor();
+	}
+	
+	public void setLevelName(String name) {
+		this.levelName = name;
+	}
+	
+	public void setSpawnRate(int amount) {
+		this.spawnEnemy = amount;
+	}
+	
+	public void setNextLevelScore(int amount) {
+		this.nextLevelScore = amount;
+	}
+	
+	public void setEnemySpeed(float amount) {
+		for (int w = 0; w < enemies.size(); w++) {
+			Enemy enemy = enemies.get(w);
+			enemy.setSpeed(amount);
+		}
+	}
+	
+	public static Player getPlayer() {
+		return player;
 	}
 	
 	public void checkCollisions() {
@@ -89,7 +119,14 @@ public class World {
 		player.reset();
 	}
 	
-	public void update(GameContainer container) throws SlickException {
+	public void resetWorld() {
+		enemies.clear();
+		bullets.clear();
+		player.reset();
+		this.untilNextLevel = nextLevelScore;
+	}
+	
+	public void update(GameContainer container, StateBasedGame game) throws SlickException {
 		spawnRate++;
 		player.update(container);
 
@@ -105,14 +142,20 @@ public class World {
 		
 		Random random = new Random();
 		
-			if (spawnRate == 20) {
-				enemies.add(new Enemy((float) Math.random() * 590, 0));
-			}
-			if (spawnRate == 22) {
-				spawnRate = 0;
-			}
-			
-			checkCollisions();
+		if (spawnRate == spawnEnemy) {
+			enemies.add(new Enemy((float) Math.random() * 590, 0));
+		}
+		if (spawnRate == spawnEnemy + 2) {
+			spawnRate = 0;
+		}
+		
+		untilNextLevel = nextLevelScore - player.getScore();
+		checkCollisions();
+		
+		if (player.getScore() == nextLevelScore) {
+			resetWorld();
+			game.enterState(nextLevel);
+		}
 	}
 	
 	public void render(GameContainer container, Graphics g) {
@@ -133,7 +176,13 @@ public class World {
 		
 		g.setColor(Color.white);
 		g.drawString(health + player.getHealth(), 0, 0);
-		g.drawString(score + player.getScore(), 500, 0);
+		g.drawString(levelName + ": " + untilNextLevel + " pts until next level!", 150, 0);
+		g.drawString(score + player.getActualScore(), 500, 0);
+		
+		levelNameTimer++;
+		if (levelNameTimer < 200) {
+			g.drawString(levelName, 280, 230);
+		}
 	}
 
 }

@@ -34,6 +34,7 @@ public class Player {
 	private int maxHealth = 100;
 	private int health;
 	private static int score = 0;
+	private static int actualScore = 0;
 	
 	private ArrayList<Bullet> bullets;
 	
@@ -89,8 +90,13 @@ public class Player {
 		return score;
 	}
 	
+	public static int getActualScore() {
+		return actualScore;
+	}
+	
 	public static void inscreaseScore(int amount) {
 		score += amount;
+		actualScore += amount;
 	}
 	
 	public void decreaseHealth(int amount) {
@@ -100,8 +106,11 @@ public class Player {
 	
 	public void reset() {
 		x = 300;
-		health = maxHealth;
 		score = 0;
+	}
+	
+	public void resetHealth() {
+		health = maxHealth;
 	}
 	
 	public void die() {

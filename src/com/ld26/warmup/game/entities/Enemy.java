@@ -56,6 +56,10 @@ public class Enemy {
 		deathSFX.play();
 	}
 	
+	public void setSpeed(float amount) {
+		movementSpeed = amount * 15;
+	}
+	
 	public void update(GameContainer container) {
 		y += movementSpeed;
 		

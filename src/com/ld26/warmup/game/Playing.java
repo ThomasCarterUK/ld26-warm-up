@@ -21,14 +21,16 @@ public class Playing extends BasicGameState {
 
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
-		world = new World(width, height, new Image("res/graphics/bg.png"), game);
+		world = new World(width, height, new Image("res/graphics/bg.png"), game, GameStates.level2);
 		
 	}
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-		world.update(container);
-		
+		world.update(container, game);
+		world.setLevelName("Level 1");
+		world.setEnemySpeed(0.17f);
+		world.setNextLevelScore(500);
 	}
 	
 	@Override
