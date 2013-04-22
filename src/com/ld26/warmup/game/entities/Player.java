@@ -104,6 +104,10 @@ public class Player {
 		hurtSFX.play();
 	}
 	
+	public void increaseHealth(int amount) {
+		health += amount;
+	}
+	
 	public void reset() {
 		x = 300;
 		score = 0;
@@ -113,9 +117,10 @@ public class Player {
 		health = maxHealth;
 	}
 	
-	public void die() {
-		deathSFX.play();
+	public void die() throws SlickException {
 		game.enterState(GameStates.gameover);
+		Sound gameoverSFX = new Sound("res/sounds/gameover.wav");
+		gameoverSFX.play();
 	}
 	
 	public void update(GameContainer container) throws SlickException {

@@ -5,6 +5,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -40,7 +41,7 @@ public class GameOver extends BasicGameState {
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		screen.draw(0, 0);
 		g.setColor(Color.green);
-		g.drawString("Score: " + Player.getScore(), 260, 250);
+		g.drawString("Score: " + Player.getActualScore(), 260, 250);
 	}
 
 	@Override

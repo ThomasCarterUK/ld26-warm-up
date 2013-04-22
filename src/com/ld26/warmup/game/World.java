@@ -14,6 +14,8 @@ import org.newdawn.slick.state.StateBasedGame;
 import com.ld26.warmup.game.entities.Enemy;
 import com.ld26.warmup.game.entities.Floor;
 import com.ld26.warmup.game.entities.Player;
+import com.ld26.warmup.game.pickups.BasePickup;
+import com.ld26.warmup.game.pickups.HealthPickup;
 import com.ld26.warmup.game.projectiles.Bullet;
 
 public class World {
@@ -35,11 +37,17 @@ public class World {
 	private Floor floor;
 	private static ArrayList<Enemy> enemies;
 	public static ArrayList<Bullet> bullets;
+	private static ArrayList<HealthPickup> healthPickups;
 	private Bullet bullet;
 	private Sound deathSFX;
 	
 	private int spawnRate = 0;
 	private int spawnEnemy = 50;
+	private int time = 0;
+	
+	private HealthPickup healthPickup;
+	private boolean healthPickupLanded = false;
+	private static boolean pickupsEnabled = true;
 	
 	public World(int width, int height, Image background, StateBasedGame game, int nextLevel) throws SlickException {
 		this.game = game;
@@ -50,6 +58,7 @@ public class World {
 		player = new Player(this, game);
 		enemies = new ArrayList<Enemy>();
 		bullets = player.getBullets();
+		healthPickups = new ArrayList<HealthPickup>();
 		deathSFX = new Sound("res/sounds/death.wav");
 		floor = new Floor();
 	}
@@ -107,6 +116,28 @@ public class World {
         		}
         	}
         }
+		for (int w = 0; w < healthPickups.size(); w++) {
+			HealthPickup healthPickup = healthPickups.get(w);
+			if (healthPickup.getBounds().intersects(floor.getBounds())) {
+				healthPickupLanded = true;
+				healthPickup.stopFalling();
+			}
+			if (healthPickup.getBounds().intersects(player.getBounds()) && healthPickupLanded) {
+				player.increaseHealth(15);
+				healthPickups.remove(w);
+			}
+		}
+	}
+	public static boolean getPickupToggle() {
+		return pickupsEnabled;
+	}
+	
+	public static void togglePickup(boolean toggle) {
+		pickupsEnabled = toggle;
+	}
+	
+	public void spawnPickup() throws SlickException {
+		healthPickups.add(new HealthPickup((float) Math.random() * (width - 32), 0));
 	}
 	
 	public void killEnemy(Enemy enemy) {
@@ -127,8 +158,10 @@ public class World {
 	}
 	
 	public void update(GameContainer container, StateBasedGame game) throws SlickException {
+		time++;
 		spawnRate++;
 		player.update(container);
+		togglePickup(Menu.pickupsEnabled);
 
 		for (int w = 0; w < enemies.size(); w++) {
         	Enemy enemy = enemies.get(w);
@@ -140,7 +173,17 @@ public class World {
         	bullet.update();
         }
 		
-		Random random = new Random();
+		for (int w = 0; w < healthPickups.size(); w++) {
+			HealthPickup healthPickup = healthPickups.get(w);
+			healthPickup.update();
+		}
+		
+		int random = (int) Math.round(Math.random() * time);
+		System.out.println("Time: " + time);
+		System.out.println("Random: " + random);
+		if (pickupsEnabled && time > 1000 && time == random) {
+			spawnPickup();
+		}
 		
 		if (spawnRate == spawnEnemy) {
 			enemies.add(new Enemy((float) Math.random() * 590, 0));
@@ -166,6 +209,11 @@ public class World {
         	Enemy enemy = enemies.get(w);
         	enemy.render(container, g);
         }
+        
+        for (int w = 0; w < healthPickups.size(); w++) {
+			HealthPickup healthPickup = healthPickups.get(w);
+			healthPickup.render();
+		}
         
         for (int w = 0; w < bullets.size(); w++) {
         	Bullet bullet = bullets.get(w);

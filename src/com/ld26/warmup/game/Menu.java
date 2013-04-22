@@ -19,7 +19,9 @@ public class Menu extends BasicGameState {
 	private MenuPlayer player;
 	private Floor floor;
 	
+	public static boolean pickupsEnabled = true;
 	private String playText = "Press Enter to Begin!";
+	private String pickupToggleText = "On";
 
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
@@ -37,6 +39,19 @@ public class Menu extends BasicGameState {
 		if (keyboard.isKeyPressed(Input.KEY_ENTER)) {
 			game.enterState(GameStates.playing);
 		}
+		if (keyboard.isKeyPressed(Input.KEY_P)) {
+			if (pickupsEnabled) {
+				pickupsEnabled = false;
+				pickupToggleText = "Off";
+				System.out.println(pickupsEnabled);
+			}
+			else if (!pickupsEnabled) {
+				pickupsEnabled = true;
+				pickupToggleText = "On";
+				System.out.println(pickupsEnabled);
+			}
+			
+		} 
 	}
 	
 	@Override
@@ -50,7 +65,8 @@ public class Menu extends BasicGameState {
 		floor.render();
 		
 		g.setColor(Color.green);
-		g.drawString(playText, 230, container.getHeight() - 120);
+		g.drawString(playText, 130, container.getHeight() - 120);
+		g.drawString("Pickups: " + pickupToggleText + " (P)", 360, container.getHeight() - 120);
 	}
 
 	@Override
