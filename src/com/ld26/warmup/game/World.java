@@ -1,12 +1,12 @@
 package com.ld26.warmup.game;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.state.StateBasedGame;
@@ -14,7 +14,6 @@ import org.newdawn.slick.state.StateBasedGame;
 import com.ld26.warmup.game.entities.Enemy;
 import com.ld26.warmup.game.entities.Floor;
 import com.ld26.warmup.game.entities.Player;
-import com.ld26.warmup.game.pickups.BasePickup;
 import com.ld26.warmup.game.pickups.HealthPickup;
 import com.ld26.warmup.game.projectiles.Bullet;
 
@@ -45,6 +44,8 @@ public class World {
 	private int spawnEnemy = 50;
 	private int time = 0;
 	
+	private Sound pickupSound;
+	private Sound pickupSpawnSound;
 	private HealthPickup healthPickup;
 	private boolean healthPickupLanded = false;
 	private static boolean pickupsEnabled = true;
@@ -61,6 +62,9 @@ public class World {
 		healthPickups = new ArrayList<HealthPickup>();
 		deathSFX = new Sound("res/sounds/death.wav");
 		floor = new Floor();
+		pickupSound = new Sound("res/sounds/pickup.wav");
+		pickupSpawnSound = new Sound("res/sounds/pickupdropoff.wav");
+		spawnPickup();
 	}
 	
 	public void setLevelName(String name) {
@@ -124,6 +128,7 @@ public class World {
 			}
 			if (healthPickup.getBounds().intersects(player.getBounds()) && healthPickupLanded) {
 				player.increaseHealth(15);
+				pickupSound.play();
 				healthPickups.remove(w);
 			}
 		}
@@ -138,6 +143,7 @@ public class World {
 	
 	public void spawnPickup() throws SlickException {
 		healthPickups.add(new HealthPickup((float) Math.random() * (width - 32), 0));
+		pickupSpawnSound.play();
 	}
 	
 	public void killEnemy(Enemy enemy) {
@@ -162,6 +168,11 @@ public class World {
 		spawnRate++;
 		player.update(container);
 		togglePickup(Menu.pickupsEnabled);
+		
+		Input keyboard = container.getInput();
+		if (keyboard.isKeyPressed(Input.KEY_P)) {
+			spawnPickup();
+		}
 
 		for (int w = 0; w < enemies.size(); w++) {
         	Enemy enemy = enemies.get(w);

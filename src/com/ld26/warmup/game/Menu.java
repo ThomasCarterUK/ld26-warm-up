@@ -6,6 +6,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -22,6 +23,12 @@ public class Menu extends BasicGameState {
 	public static boolean pickupsEnabled = true;
 	private String playText = "Press Enter to Begin!";
 	private String pickupToggleText = "On";
+	private Sound music;
+	
+	public Menu() throws SlickException {
+		music = new Sound("res/sounds/music.wav");
+		music.play();
+	}
 
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
