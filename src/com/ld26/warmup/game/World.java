@@ -64,7 +64,6 @@ public class World {
 		floor = new Floor();
 		pickupSound = new Sound("res/sounds/pickup.wav");
 		pickupSpawnSound = new Sound("res/sounds/pickupdropoff.wav");
-		spawnPickup();
 	}
 	
 	public void setLevelName(String name) {
@@ -127,7 +126,7 @@ public class World {
 				healthPickup.stopFalling();
 			}
 			if (healthPickup.getBounds().intersects(player.getBounds()) && healthPickupLanded) {
-				player.increaseHealth(15);
+				player.increaseHealth(5);
 				pickupSound.play();
 				healthPickups.remove(w);
 			}

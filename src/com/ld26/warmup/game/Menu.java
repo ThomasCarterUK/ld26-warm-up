@@ -25,9 +25,8 @@ public class Menu extends BasicGameState {
 	private String pickupToggleText = "On";
 	private Sound music;
 	
-	public Menu() throws SlickException {
+	public Menu(SpaceAttack game) throws SlickException {
 		music = new Sound("res/sounds/music.wav");
-		music.play();
 	}
 
 	@Override

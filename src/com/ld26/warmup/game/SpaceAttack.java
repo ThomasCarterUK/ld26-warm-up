@@ -15,7 +15,7 @@ public class SpaceAttack extends StateBasedGame {
 
 	public SpaceAttack() throws SlickException {
 		super("Space Attack");
-		this.addState(new Menu());
+		this.addState(new Menu(this));
 		this.addState(new Playing(this));
 		this.addState(new Level2());
 		this.addState(new Level3());
