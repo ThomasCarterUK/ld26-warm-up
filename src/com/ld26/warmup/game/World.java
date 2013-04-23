@@ -15,6 +15,7 @@ import com.ld26.warmup.game.entities.Enemy;
 import com.ld26.warmup.game.entities.Floor;
 import com.ld26.warmup.game.entities.Player;
 import com.ld26.warmup.game.pickups.HealthPickup;
+import com.ld26.warmup.game.pickups.ShieldPickup;
 import com.ld26.warmup.game.projectiles.Bullet;
 
 public class World {
@@ -37,6 +38,7 @@ public class World {
 	private static ArrayList<Enemy> enemies;
 	public static ArrayList<Bullet> bullets;
 	private static ArrayList<HealthPickup> healthPickups;
+	private static ArrayList<ShieldPickup> shieldPickups;
 	private Bullet bullet;
 	private Sound deathSFX;
 	
@@ -47,7 +49,9 @@ public class World {
 	private Sound pickupSound;
 	private Sound pickupSpawnSound;
 	private HealthPickup healthPickup;
+	private ShieldPickup shieldPickup;
 	private boolean healthPickupLanded = false;
+	private boolean shieldPickupLanded = false;
 	private static boolean pickupsEnabled = true;
 	
 	public World(int width, int height, Image background, StateBasedGame game, int nextLevel) throws SlickException {
@@ -60,6 +64,7 @@ public class World {
 		enemies = new ArrayList<Enemy>();
 		bullets = player.getBullets();
 		healthPickups = new ArrayList<HealthPickup>();
+		shieldPickups = new ArrayList<ShieldPickup>();
 		deathSFX = new Sound("res/sounds/death.wav");
 		floor = new Floor();
 		pickupSound = new Sound("res/sounds/pickup.wav");
@@ -99,7 +104,13 @@ public class World {
         	this.enemy = enemy;
         	if (enemy.getBounds().intersects(player.getBounds())) {
         		killEnemy(enemy);
-        		player.decreaseHealth(3);
+        		if (player.getShieldState()) {
+        			player.decreaseHealth(0);
+        		}
+        		else if (!player.getShieldState()) {
+        			player.decreaseHealth(3);
+        		}
+        		
         	}
         	if (enemy.getBounds().intersects(floor.getBounds())) {
         		killEnemy(enemy);
@@ -131,6 +142,18 @@ public class World {
 				healthPickups.remove(w);
 			}
 		}
+		for (int w = 0; w < shieldPickups.size(); w++) {
+			ShieldPickup shieldPickup = shieldPickups.get(w);
+			if (shieldPickup.getBounds().intersects(floor.getBounds())) {
+				shieldPickupLanded = true;
+				shieldPickup.stopFalling();
+			}
+			if (shieldPickup.getBounds().intersects(player.getBounds()) && shieldPickupLanded) {
+				player.activateShield();
+				pickupSound.play();
+				shieldPickups.remove(w);
+			}
+		}
 	}
 	public static boolean getPickupToggle() {
 		return pickupsEnabled;
@@ -140,8 +163,19 @@ public class World {
 		pickupsEnabled = toggle;
 	}
 	
-	public void spawnPickup() throws SlickException {
-		healthPickups.add(new HealthPickup((float) Math.random() * (width - 32), 0));
+	public void spawnPickup(int pickupType) throws SlickException {
+		if (pickupType == 0) {
+			healthPickups.add(new HealthPickup((float) Math.random() * (width - 32), 0));
+			pickupSpawnSound.play();
+		}
+		else if (pickupType == 1) {
+			shieldPickups.add(new ShieldPickup((float) Math.random() * (width - 32), 0));
+			pickupSpawnSound.play();
+		}
+	}
+	
+	public void spawnShieldPickup() throws SlickException {
+		shieldPickups.add(new ShieldPickup((float) Math.random() * (width - 32), 0));
 		pickupSpawnSound.play();
 	}
 	
@@ -170,7 +204,7 @@ public class World {
 		
 		Input keyboard = container.getInput();
 		if (keyboard.isKeyPressed(Input.KEY_P)) {
-			spawnPickup();
+			spawnPickup((int) Math.round(Math.random() * 2));
 		}
 
 		for (int w = 0; w < enemies.size(); w++) {
@@ -188,11 +222,16 @@ public class World {
 			healthPickup.update();
 		}
 		
+		for (int w = 0; w < shieldPickups.size(); w++) {
+			ShieldPickup shieldPickup = shieldPickups.get(w);
+			shieldPickup.update();
+		}
+		
 		int random = (int) Math.round(Math.random() * time);
 		System.out.println("Time: " + time);
 		System.out.println("Random: " + random);
 		if (pickupsEnabled && time > 1000 && time == random) {
-			spawnPickup();
+			spawnPickup((int) Math.round(Math.random() * 1));
 		}
 		
 		if (spawnRate == spawnEnemy) {
@@ -223,6 +262,11 @@ public class World {
         for (int w = 0; w < healthPickups.size(); w++) {
 			HealthPickup healthPickup = healthPickups.get(w);
 			healthPickup.render();
+		}
+        
+        for (int w = 0; w < shieldPickups.size(); w++) {
+			ShieldPickup shieldPickup = shieldPickups.get(w);
+			shieldPickup.render();
 		}
         
         for (int w = 0; w < bullets.size(); w++) {

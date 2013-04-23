@@ -22,6 +22,7 @@ public class Player {
 	private float x = 300;
 	private float y = 410;
 	private Image texture;
+	private Image shield;
 	private Rectangle collisionBox;
 	private Sound laserSFX;
 	private Sound hurtSFX;
@@ -36,11 +37,15 @@ public class Player {
 	private static int score = 0;
 	private static int actualScore = 0;
 	
+	private boolean shieldActive = false;
+	private int shieldTimer = 0;
+	
 	private ArrayList<Bullet> bullets;
 	
 	public Player(World world, StateBasedGame game) throws SlickException {
 		this.game = game;
 		texture = new Image("res/graphics/player.png");
+		shield = new Image("res/graphics/shield.png");
 		width = texture.getWidth();
 		height = texture.getHeight();
 		collisionBox = new Rectangle(x, y, width, height);
@@ -117,6 +122,19 @@ public class Player {
 		health = maxHealth;
 	}
 	
+	public boolean getShieldState() {
+		return shieldActive;
+	}
+	
+	public void activateShield() {
+		shieldActive = true;
+	}
+	
+	public void destroyShield() {
+		shieldActive = false;
+		shieldTimer = 0;
+	}
+	
 	public void die() throws SlickException {
 		game.enterState(GameStates.gameover);
 		Sound gameoverSFX = new Sound("res/sounds/gameover.wav");
@@ -144,12 +162,23 @@ public class Player {
         	bullet.update();
         }
 		
+		if (shieldActive) {
+			shieldTimer++;
+			if (shieldTimer >= 800) {
+				destroyShield();
+			}
+		}
+		
 		collisionBox.setX(x);
 		collisionBox.setY(y);
 	}
 	
 	public void render(GameContainer container, Graphics g) {
 		texture.draw(x, y);
+		
+		if (shieldActive) {
+			shield.draw(x, y - shield.getHeight());
+		}
 		//g.setColor(Color.white);
 		//g.draw(collisionBox);
 	}
